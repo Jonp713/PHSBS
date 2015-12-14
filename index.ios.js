@@ -1,6 +1,8 @@
 'use strict';
 
 var React = require('react-native');
+import NavigationBar from 'react-native-navbar';
+
 var {
   AppRegistry,
   Image,
@@ -9,12 +11,17 @@ var {
   StyleSheet,
   Text,
   View,
+  StatusBarIOS,
 } = React;
+
+
+//main theme color 3fb7be
+
 
 var PHSBS = React.createClass({
   statics: {
-    title: '<ListView> - Simple',
-    description: 'Performant, scrollable list of data.'
+    title: 'Popular High School Boy Simulator',
+    description: 'Your so cool, Austin'
   },
 
   getInitialState: function() {
@@ -27,42 +34,97 @@ var PHSBS = React.createClass({
   _pressData: ({}: {[key: number]: boolean}),
 
   componentWillMount: function() {
+    StatusBarIOS.setStyle(0);
+
     this._pressData = {};
   },
 
-  render: function() {
-    return (
 
+  render: function() {
+
+    var rightButtonConfig = {
+      title: '+',
+      handler: function onNext() {
+        alert('hello!');
+      }
+
+    };
+
+    var titleConfig = {
+      title: 'Messages',
+    };
+    return (
+        <View>
+          <NavigationBar
+            style = {styles.header}
+            title={titleConfig}
+            rightButton={rightButtonConfig} />
+          <View style={styles.separator} />
         <ListView
           dataSource={this.state.dataSource}
           renderRow={this._renderRow} />
+
+        </View>
     );
   },
 
   _renderRow: function(text: {}, sectionID: number, rowID: number) {
 
-    console.log(text, sectionID, rowID);
     return (
       <TouchableHighlight onPress={() => this._pressRow(rowID)}>
         <View>
-          <View style={styles.row}>
-            <Text style={styles.text}>
-            {text.from} {text.message}
-            </Text>
+
+          <View style={[styles.row, styles.paddMe]}>
+
+            <View style = {styles.seen}>
+              <Image source={require('./bluecircle.png')}
+              style = {styles.dot}/>
+            </View>
+
+            <View style = {styles.content}>
+
+              <View style={styles.row}>
+                <Text style={[styles.text, styles.from, styles.bold]}>
+                {text.from}
+                </Text>
+                <Text style={[styles.text, styles.time]}>
+                {text.time} > 
+                </Text>
+              </View>
+
+              <View style={styles.row}>
+                <Text style={[styles.text, styles.message]}>
+                 {text.message}
+                </Text>
+
+              </View>
+
+              <View style={styles.separator} />
+
+            </View>
+
+
           </View>
-          <View style={styles.separator} />
+
         </View>
       </TouchableHighlight>
     );
   },
 
+  toReadableDate: function(time){
+
+    //if(time > 1 Week), return get date mm/dd/yy
+    //if(time != today), return dayofweek
+    //if(time == today), reurn hh:mm:AM
+  },
+
   texts: [
-    {from: "joe", message: "hi"},
-    {from: "jon", message: "ur a fool"}
+    {time: "9:05PM", from: "joe", message: "do you hve any freedom? I know its wierd... me and you haven't talked in a whike"},
+    {time: "3:05PM", from: "jon", message: "ur a fool"},
+    {time: "1:05PM", from: "Bronte", message: "HI!!!"},
   ],
 
   _genRows: function(pressData: {[key: number]: boolean}): Array<string> {
-
 
     return this.texts;
   },
@@ -75,45 +137,58 @@ var PHSBS = React.createClass({
   },
 });
 
-var THUMB_URLS = [
-  'Thumbnails/like.png',
-  'Thumbnails/dislike.png',
-  'Thumbnails/call.png',
-  'Thumbnails/fist.png',
-  'Thumbnails/bandaged.png',
-  'Thumbnails/flowers.png',
-  'Thumbnails/heart.png',
-  'Thumbnails/liking.png',
-  'Thumbnails/party.png',
-  'Thumbnails/poke.png',
-  'Thumbnails/superlike.png',
-  'Thumbnails/victory.png',
-  ];
-var LOREM_IPSUM = 'Lorem ipsum dolor sit amet, ius ad pertinax oportere accommodare, an vix civibus corrumpit referrentur. Te nam case ludus inciderint, te mea facilisi adipiscing. Sea id integre luptatum. In tota sale consequuntur nec. Erat ocurreret mei ei. Eu paulo sapientem vulputate est, vel an accusam intellegam interesset. Nam eu stet pericula reprimique, ea vim illud modus, putant invidunt reprehendunt ne qui.';
-
-/* eslint no-bitwise: 0 */
-var hashCode = function(str) {
-  var hash = 15;
-  for (var ii = str.length - 1; ii >= 0; ii--) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(ii);
-  }
-  return hash;
-};
-
 var styles = StyleSheet.create({
+  seen:{
+    height:50,
+    flex:1,
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'center'
+  },
+  from:{
+    flex:8,
+    fontSize:17,
+    color:"#222"
+  },
+  time:{
+    fontSize:15,
+    flex:4,
+    color:"#888",
+    textAlign:"right",
+    paddingRight:10,
+  },
+  message:{
+    fontSize:15,
+    height:50,
+    flex:1,
+    color:"#888",
+  },
+  content:{
+    flex:9
+  },
+  dot:{
+    width: 12,
+    height:12,
+  },
+  bold:{
+    fontWeight:"700",
+  },
+  header:{
+    backgroundColor: '#F6F6F6',
+    paddingTop:30,
+    marginTop:-30,
+    height:70,
+    opacity:.9
+  },
   row: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    padding: 10,
-    backgroundColor: '#F6F6F6',
+  },
+  paddMe:{
+    paddingTop:10,
   },
   separator: {
-    height: 1,
-    backgroundColor: '#CCCCCC',
-  },
-  thumb: {
-    width: 64,
-    height: 64,
+    height: .5,
+    backgroundColor: '#BBB',
   },
   text: {
     flex: 1,
